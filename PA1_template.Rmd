@@ -8,15 +8,47 @@ output:
 
 ## Loading and preprocessing the data
 
+```{r, echo="TRUE"}
+library(dplyr)
+
+activity <- read.csv("activity.csv")
+```
+
 
 
 ## What is mean total number of steps taken per day?
 
+```{r, echo="TRUE"}
+mean_steps <- aggregate(data =activity, steps ~ date, FUN = mean, na.rm=TRUE)
+hist(mean_steps$steps, main = "Average Steps per Day", col = "blue", xlab = "Number of Steps")
+median_steps <-aggregate(data =activity, steps ~ date, FUN = median, na.rm=TRUE)
 
+```
 
+### Mean Steps per Day
+```{r, echo=FALSE}
+mean_steps
+```
+### Median Steps per Day
+```{r, echo=FALSE}
+median_steps
+```
 ## What is the average daily activity pattern?
 
+```{r}
+library(stringr)
+library(lubridate)
 
+for (arow in 1:nrow(activity)) {
+  time_field <- str_pad(as.character(activity[arow,"interval"]), 4, pad = "0")
+  tmp1 <- substr(time_field,1,2)
+  tmp2 <- substr(time_field, 3,4)
+  tmp_time <- paste(tmp1,tmp2,sep = ":")
+  tmp_date <- as.character(activity[arow,"date"])
+  dtime <- paste(tmp_date, tmp_time, sep = " ")
+  activity[arow,"date_time"] <- dtime
+}
+```
 
 ## Imputing missing values
 

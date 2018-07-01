@@ -36,6 +36,7 @@ median_steps
 ## What is the average daily activity pattern?
 
 ```{r}
+
 library(stringr)
 library(lubridate)
 
@@ -48,10 +49,74 @@ for (arow in 1:nrow(activity)) {
   dtime <- paste(tmp_date, tmp_time, sep = " ")
   activity[arow,"date_time"] <- dtime
 }
+
+with(activity, {
+        plot(factor(date_time), steps, type="l",xaxt="n")
+})
 ```
 
-## Imputing missing values
+###Average daily activity, second possibility (not sure which the instructor was looking for)
 
+```{r}
+with(mean_steps, {
+plot.ts(factor(date), steps)
+})
+```
+###Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
+```{r}
+max(activity$steps, na.rm=TRUE)
+```
+
+## Inputing missing values
+
+### Number of missing values
+
+```{r}
+sum(is.na(activity$steps))
+```
+
+```{r}
+full_activity <- activity[1:3]
+full_activity[] <- lapply(full_activity, function(x) ifelse(is.na(x), mean(x, na.rm = TRUE), x))
+```
+
+### Total steps each day
+
+```{r}
+total_full_steps <- aggregate(data =full_activity, steps ~ date, FUN = sum, na.rm=TRUE)
+hist(total_full_steps$steps, xlab = "Steps Each Day", main="Total Steps Each Day")
+```
+### Mean steps in revised data set
+
+```{r}
+aggregate(data =full_activity, steps ~ date, FUN = mean, na.rm=TRUE)
+```
+
+### Median steps in revised data set
+
+```{r}
+aggregate(data =full_activity, steps ~ date, FUN = median, na.rm=TRUE)
+```
+###What is the impact of imputing missing data on the estimates of the total daily number of steps?
+The mean and median values both increase.
 
 ## Are there differences in activity patterns between weekdays and weekends?
+
+```{r}
+library(lattice)
+
+mean_steps$weekend <- ifelse(weekdays(as.Date(mean_steps$date)) %in% c("Saturday","Sunday"), "weekend", "weekday")
+
+panel.smoother <- function(x, y) {
+  panel.xyplot(x, y) # show points 
+  panel.loess(x, y)  # show smoothed line 
+}
+
+with(mean_steps, {
+  xyplot(steps ~factor(date) |factor(weekend), 
+         type = "l",
+         xlab = "Date", ylab = "Number of Steps", 
+         main = "Average Steps per Day on Weekdays/Weekends")    
+})
+```

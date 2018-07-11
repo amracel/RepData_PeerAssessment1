@@ -50,6 +50,7 @@ hist(mean_steps$steps, main = "Average Steps per Day", col = "blue", xlab = "Num
 median_steps <-aggregate(data =activity, steps ~ date, FUN = median, na.rm=TRUE)
 ```
 
+## What is the average daily activity pattern?
 ### Mean Steps per Day
 
 ```
@@ -166,7 +167,6 @@ median_steps <-aggregate(data =activity, steps ~ date, FUN = median, na.rm=TRUE)
 ## 52 2012-11-28     0
 ## 53 2012-11-29     0
 ```
-## What is the average daily activity pattern?
 
 
 ```r
@@ -186,19 +186,10 @@ library(lubridate)
 ```
 
 ```r
-for (arow in 1:nrow(activity)) {
-  time_field <- str_pad(as.character(activity[arow,"interval"]), 4, pad = "0")
-  tmp1 <- substr(time_field,1,2)
-  tmp2 <- substr(time_field, 3,4)
-  tmp_time <- paste(tmp1,tmp2,sep = ":")
-  tmp_date <- as.character(activity[arow,"date"])
-  dtime <- paste(tmp_date, tmp_time, sep = " ")
-  activity[arow,"date_time"] <- dtime
-}
+total_steps <- aggregate(data =activity, steps ~ date, FUN = sum, na.rm=TRUE)
 
-with(activity, {
-        plot(factor(date_time), steps, type="l",xaxt="n")
-})
+hist(total_steps$steps, main = "Total Steps Each Day", xlab = "Number of Steps", 
+     col = "green", breaks = 10)
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
@@ -207,9 +198,7 @@ with(activity, {
 
 
 ```r
-with(mean_steps, {
-plot.ts(factor(date), steps)
-})
+plot(mean_steps$steps~as.Date(mean_steps$date, "%Y-%m-%d"),  main = "Mean Steps", xlab="Date", ylab = "Number of Steps", type="l")
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-6-1.png)<!-- -->

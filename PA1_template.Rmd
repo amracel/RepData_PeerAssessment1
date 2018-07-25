@@ -13,49 +13,32 @@ library(dplyr)
 
 activity <- read.csv("activity.csv")
 ```
+## Total Number of Steps Taken Per Day
 
+```{r, echo="TRUE"}
+total_daily_steps <- aggregate(data =activity, steps ~ date, FUN = sum, na.rm=TRUE)
+
+hist(total_daily_steps$steps, main = "Steps per Day", xlab = "Steps", col = "orange")
+```
 
 
 ## What is mean total number of steps taken per day?
-
 ```{r, echo="TRUE"}
+print(paste("Mean Steps Overall: ",mean(total_daily_steps$steps, na.rm = TRUE)))
+print(paste("Median Steps Overall: ", median(total_daily_steps$steps, na.rm = TRUE)))
 mean_steps <- aggregate(data =activity, steps ~ date, FUN = mean, na.rm=TRUE)
 hist(mean_steps$steps, main = "Average Steps per Day", col = "blue", xlab = "Number of Steps")
 median_steps <-aggregate(data =activity, steps ~ date, FUN = median, na.rm=TRUE)
 
 ```
 
-## What is the average daily activity pattern?
-### Mean Steps per Day
-```{r, echo=FALSE}
-mean_steps
-```
-### Median Steps per Day
-```{r, echo=FALSE}
-median_steps
-```
 
-```{r}
-
-library(stringr)
-library(lubridate)
-
-total_steps <- aggregate(data =activity, steps ~ date, FUN = sum, na.rm=TRUE)
-
-hist(total_steps$steps, main = "Total Steps Each Day", xlab = "Number of Steps", 
-     col = "green", breaks = 10)
-```
-
-###Average daily activity, second possibility (not sure which the instructor was looking for)
-
-```{r}
-plot(mean_steps$steps~as.Date(mean_steps$date, "%Y-%m-%d"),  main = "Mean Steps", xlab="Date", ylab = "Number of Steps", type="l")
-
-```
 ###Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
 ```{r}
-max(activity$steps, na.rm=TRUE)
+max_steps <- max(activity$steps, na.rm=TRUE)
+activity[which(activity$steps == max_steps),]
+
 ```
 
 ## Inputing missing values
@@ -75,7 +58,7 @@ full_activity[] <- lapply(full_activity, function(x) ifelse(is.na(x), mean(x, na
 
 ```{r}
 total_full_steps <- aggregate(data =full_activity, steps ~ date, FUN = sum, na.rm=TRUE)
-hist(total_full_steps$steps, xlab = "Steps Each Day", main="Total Steps Each Day")
+hist(total_full_steps$steps, xlab = "Steps Each Day", main="Total Steps Each Day", col = "green")
 ```
 ### Mean steps in revised data set
 
